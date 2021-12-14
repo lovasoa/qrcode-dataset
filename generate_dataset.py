@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Creates a dataset of distorted qr codes
+"""
 from typing import List, Tuple
 import qrcode
 import numpy as np
