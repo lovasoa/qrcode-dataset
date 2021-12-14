@@ -130,7 +130,7 @@ def image_distortion(p=0.5):
                 fill_value=np.random.randint(0, 255),
                 p=0.2,
             ),
-            GaussNoise(),
+            GaussNoise(var_limit=(0.0, 500.0), p=0.75),
             OneOf(
                 [
                     MotionBlur(blur_limit=19, p=0.7),
@@ -183,18 +183,21 @@ def generate_image_pixels_and_text() -> Tuple[Image.Image, np.array, str]:
 
 
 dataset_root = Path("dataset")
+dataset_root.mkdir(parents=True, exist_ok=True)
 
-
-def write_sample(i: int, image: Image.Image, matrix: np.array, text: str):
-    id = f"{i:06d}"
+def write_sample(id: str, image: Image.Image, matrix: np.array, text: str):
+    print(f"Writing sample {id}")
     image.save(dataset_root / f"{id}.png")
     (dataset_root / f"{id}.txt").write_text(text)
     np.save(dataset_root / f"{id}.npy", matrix)
 
 
 def create_sample(i: int):
+    id = f"{i:06d}"
+    if (dataset_root / f"{id}.png").exists():
+        return
     image, matrix, text = generate_image_pixels_and_text()
-    write_sample(i, image, matrix, text)
+    write_sample(id, image, matrix, text)
 
 
 from multiprocessing import Pool
